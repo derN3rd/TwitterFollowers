@@ -5,7 +5,7 @@ var schedule = require('node-schedule');
 var TeleBot = require('telebot');
 
 var settings = {
-  setupcomplete: false,
+  setupcomplete: false, //DO NOT CHANGE UNTIL YOU RAN app.js THE FIRST TIME
   notitype: 1, //see sendNotification() to see which type you want to use
   debug: false,
   twitter: {
