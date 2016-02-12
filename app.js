@@ -50,7 +50,7 @@ if ((settings.twitter.consumer_key=='') || (settings.twitter.consumer_secret==''
   process.exit(1);
 }
 
-var j = schedule.scheduleJob('0 */1 * * * *', function(){
+var j = schedule.scheduleJob('0 */2 * * * *', function(){
 	client.get('followers/ids', function(error, follower, response){
     if(settings.debug){
       if (error) throw error;
