@@ -58,6 +58,7 @@ var j = schedule.scheduleJob('0 */2 * * * *', function(){
       if (error) {
         console.log("Error while lookup all current followers: ");
         console.log(error);
+        sendNotification("Error while lookup all current followers: "+JSON.stringify(error), settings.notitype);
       }
     }
     var users = follower.ids;
@@ -91,6 +92,7 @@ var j = schedule.scheduleJob('0 */2 * * * *', function(){
             if (error) {
               console.log("Error while lookup new followers: ");
               console.log(error);
+              sendNotification("Error while lookup new followers: "+JSON.stringify(error), settings.notitype);
             }
           }
           if (settings.debug) console.log(userdata); //debug
@@ -121,6 +123,7 @@ var j = schedule.scheduleJob('0 */2 * * * *', function(){
             if (error) {
               console.log("Error while lookup unfollowers: ");
               console.log(error);
+              sendNotification("Error while lookup unfollowers: "+JSON.stringify(error), settings.notitype);
             }
           }
           if (settings.debug) console.log(userdata); //debug
