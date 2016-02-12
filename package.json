@@ -1,0 +1,10 @@
+{
+  "name": "TwitterFollowers",
+  "version": "1.0.4",
+  "dependencies": {
+    "lowdb": "^0.12.2",
+    "node-schedule": "^1.0.0",
+    "telebot": "0.0.5",
+    "twitter": "^1.2.5"
+  }
+}
