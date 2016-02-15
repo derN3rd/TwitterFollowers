@@ -92,6 +92,8 @@ var j = schedule.scheduleJob('0 */2 * * * *', function(){
             if (error) {
               console.log("Error while lookup new followers: ");
               console.log(error);
+              console.log("Query-string:");
+              console.log(queryjoined);
               sendNotification("Error while lookup new followers: "+JSON.stringify(error), settings.notitype);
             }
           }
@@ -119,22 +121,38 @@ var j = schedule.scheduleJob('0 */2 * * * *', function(){
         client.post('users/lookup', {user_id:queryjoined}, function(error, userdata, response){
           if(settings.debug){
             if (error) throw error;
-          }else{
+          }else{  
             if (error) {
-              console.log("Error while lookup unfollowers: ");
-              console.log(error);
-              sendNotification("Error while lookup unfollowers: "+JSON.stringify(error), settings.notitype);
+              if(error[0].code==17){
+                  //Unfollower but user seems to have deactivated their account on twitter
+              }else{
+                  sendNotification("Error while lookup unfollowers: "+JSON.stringify(error), settings.notitype);
+                  console.log("Error while lookup unfollowers: ");
+                  console.log(error);
+                  console.log("Query-string");
+                  console.log(queryjoined);
+              }
             }
           }
           if (settings.debug) console.log(userdata); //debug
           var userdataLength = userdata.length;
+          var fetchedUnfollowers = [];
           for (var i=0; i < userdataLength; i++) {
             //remove id from current follower db, so the next time it wont get reported as new again
+            fetchedUnfollowers[fetchedUnfollowers.length]=(userdata[i].id);
             db('currentfollowers').remove({id:userdata[i].id});
             console.log("New Unfollower: "+userdata[i].id+" (@"+userdata[i].screen_name+")");
             //add to log db
             db('actions').push({user:userdata[i].id, name:userdata[i].screen_name, action:0, time:Date.now()});
             sendNotification("New Unfollower: "+userdata[i].id+" (@"+userdata[i].screen_name+") https://twitter.com/"+userdata[i].screen_name, settings.notitype);
+          }
+          var deactivatedUsers = newunfollowers.diff(fetchedUnfollowers);
+          var deactivatedUsersLength = deactivatedUsers.length;
+          for (var i=0; i < deactivatedUsersLength; i++){
+            sendNotification("New Unfollower: "+deactivatedUsers[i]+" (deactivated Twitter)", settings.notitype);
+            console.log("New Unfollower: "+deactivatedUsers[i]+" (deactivated Twitter)");
+            db('currentfollowers').remove({id:deactivatedUsers[i]});
+            db('actions').push({user:deactivatedUsers, name:"none (deactivated Twitter)", action:0, time:Date.now()});
           }
         });
       }
